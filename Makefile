@@ -36,12 +36,18 @@ run: all
 .PHONY: all
 all: $(TARGET_IMG)
 
-$(TARGET_IMG): $(BINS_BOOT) $(BUILD_DIR_KERNEL)/kernel.bin
-	cp $(BUILD_DIR_BOOT)/mbr_part1.bin $(TARGET_IMG)
+$(TARGET_IMG): $(BINS_BOOT) $(BUILD_DIR)/krnlpck.bin
+	./create_empty_img.sh
+	dd bs=1 count=440 conv=notrunc if=$(BUILD_DIR_BOOT)/mbr_part1.bin of=$(TARGET_IMG)
 	dd bs=1 count=408 seek=32 conv=notrunc if=$(BUILD_DIR_BOOT)/mbr_part2.bin of=$(TARGET_IMG)
-	dd seek=63 conv=notrunc if=$(BUILD_DIR_BOOT)/vbr.bin of=$(TARGET_IMG)
-	dd seek=64 conv=notrunc if=$(BUILD_DIR_BOOT)/loader.bin of=$(TARGET_IMG)
-	dd seek=65 count=48 conv=notrunc if=$(BUILD_DIR_KERNEL)/kernel.bin of=$(TARGET_IMG)
+	dd bs=1 count=420 seek=1048666 conv=notrunc if=$(BUILD_DIR_BOOT)/vbr.bin of=$(TARGET_IMG)
+	dd bs=1 count=420 seek=1051738 conv=notrunc if=$(BUILD_DIR_BOOT)/vbr.bin of=$(TARGET_IMG)
+	./cp_to_img.sh $(BUILD_DIR)/krnlpck.bin $(TARGET_IMG)
+
+$(BUILD_DIR)/krnlpck.bin: $(BUILD_DIR_BOOT)/loader.bin $(BUILD_DIR_KERNEL)/kernel.bin
+	cp $(BUILD_DIR_BOOT)/loader.bin $@
+	cat $(BUILD_DIR_KERNEL)/kernel.bin >> $@
+	truncate -s 25088 $@
 
 $(BUILD_DIR_KERNEL)/kernel.bin: $(BUILD_DIR_KERNEL)/kernel.elf
 	objcopy -O binary $< $@
@@ -55,10 +61,12 @@ $(BUILD_DIR_KERNEL)/%.asm.o: $(SRC_DIR_KERNEL)/%.asm
 	mkdir -p $(dir $@)
 	$(ASM) $(ASMFLAGS) -f elf32 $< -o $@
 
+# .asm files assembled into flat raw binaries
 $(BUILD_DIR_BOOT)/%.bin: $(SRC_DIR_BOOT)/%.asm
 	mkdir -p $(dir $@)
 	$(ASM) $(ASMFLAGS) -f bin $< -o $@
 
+# CRT files
 $(BUILD_DIR)/crti.asm.o: $(SRC_DIR)/crti.asm
 	mkdir -p $(dir $@)
 	$(ASM) $(ASMFLAGS) -f elf32 $< -o $@
