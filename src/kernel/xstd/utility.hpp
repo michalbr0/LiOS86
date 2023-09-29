@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-namespace std {
+namespace LiOS86::xstd {
 
     template<typename T>
     constexpr auto move(T&& t) noexcept {

@@ -1,6 +1,6 @@
 #include "cstring.hpp"
 
-namespace std {
+namespace LiOS86::xstd {
 
     auto strcmp(const char* lhs, const char* rhs) -> int {
         while(*lhs && (*lhs == *rhs)) {

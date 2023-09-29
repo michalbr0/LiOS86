@@ -1,6 +1,6 @@
 #pragma once
 
-namespace std {
+namespace LiOS86::xstd {
 
     auto strcmp(const char* lhs, const char* rhs) -> int;
 

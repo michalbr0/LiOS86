@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "../std/utility.hpp"
+#include "../xstd/utility.hpp"
 
 // The following is a partial implementation of std::expected.
 // It is NOT fully compliant with the C++23 standard.
@@ -20,36 +20,34 @@
 // function value() is also not implemented (operator* should be used).
 // All noexcept specifiers are also dropped.
 
-namespace {
+namespace LiOS86::xstd {
 
-    // helper type traits
+    namespace {
+        // helper type traits
 
-    // true if T is a valid type argument of std::unexpected
-    template<typename T>
-    constexpr bool is_valid_unexpected_argument_v = std::is_object_v<T> &&
-                                                    !std::is_array_v<T> &&
-                                                    !std::is_const_v<T> &&
-                                                    !std::is_volatile_v<T>;
-    
-    // true if T is a valid type argument of std::expected
-    template<typename T>
-    constexpr bool is_valid_expected_argument_v = std::is_destructible_v<T> &&
-                                                    !std::is_array_v<T> &&
-                                                    !std::is_reference_v<T>;
+        // true if T is a valid type argument of std::unexpected
+        template<typename T>
+        constexpr bool is_valid_unexpected_argument_v = std::is_object_v<T> &&
+                                                        !std::is_array_v<T> &&
+                                                        !std::is_const_v<T> &&
+                                                        !std::is_volatile_v<T>;
+        
+        // true if T is a valid type argument of std::expected
+        template<typename T>
+        constexpr bool is_valid_expected_argument_v = std::is_destructible_v<T> &&
+                                                        !std::is_array_v<T> &&
+                                                        !std::is_reference_v<T>;
 
-    // Used in the implementation of std::unexpected and std::expected.
-    // These limitations are not imposed by the standard; 
-    // introduced only to simplify the implementation.
-    template<typename T>
-    constexpr bool is_sufficiently_trivial_v = std::is_trivially_copy_constructible_v<T> &&
-                                                    std::is_trivially_move_constructible_v<T> &&
-                                                    std::is_trivially_copy_assignable_v<T> &&
-                                                    std::is_trivially_move_assignable_v<T> &&
-                                                    std::is_trivially_destructible_v<T>;
-
-}
-
-namespace std {
+        // Used in the implementation of std::unexpected and std::expected.
+        // These limitations are not imposed by the standard; 
+        // introduced only to simplify the implementation.
+        template<typename T>
+        constexpr bool is_sufficiently_trivial_v = std::is_trivially_copy_constructible_v<T> &&
+                                                        std::is_trivially_move_constructible_v<T> &&
+                                                        std::is_trivially_copy_assignable_v<T> &&
+                                                        std::is_trivially_move_assignable_v<T> &&
+                                                        std::is_trivially_destructible_v<T>;
+    }
 
     template<typename E>
     requires is_valid_unexpected_argument_v<E> && is_sufficiently_trivial_v<E>
@@ -59,7 +57,7 @@ namespace std {
             constexpr unexpected(unexpected&&) = default;
 
             template<typename Err = E>
-            constexpr explicit unexpected(Err&& e) : val_e{std::forward<Err>(e)} { }
+            constexpr explicit unexpected(Err&& e) : val_e{xstd::forward<Err>(e)} { }
 
             constexpr auto error() const& -> const E& {
                 return val_e;
@@ -75,7 +73,7 @@ namespace std {
             }
 
             template<class E2>
-            friend constexpr auto operator==(unexpected& lhs, std::unexpected<E2>& rhs) -> bool {
+            friend constexpr auto operator==(unexpected& lhs, xstd::unexpected<E2>& rhs) -> bool {
                 return lhs.error() == rhs.error();
             }
 
@@ -98,7 +96,7 @@ namespace std {
         public:
             using value_type = T;
             using error_type = E;
-            using unexpected_type = std::unexpected<E>;
+            using unexpected_type = xstd::unexpected<E>;
 
             constexpr expected() : val_t{}, has_val{true} { }
             constexpr expected(const expected& other) = default;
@@ -108,15 +106,15 @@ namespace std {
 
             template<typename U = T>
             constexpr explicit(!std::is_convertible_v<U, T>) expected(U&& v) 
-                : val_t{std::forward<U>(v)}, has_val{true} { }
+                : val_t{xstd::forward<U>(v)}, has_val{true} { }
 
             template<typename G>
-            constexpr explicit(!std::is_convertible_v<const G&, E>) expected(const std::unexpected<G>& e)
+            constexpr explicit(!std::is_convertible_v<const G&, E>) expected(const xstd::unexpected<G>& e)
                 : val_e{e}, has_val{false} { }
 
             template<typename G>
-            constexpr explicit(!std::is_convertible_v<G,E>) expected(std::unexpected<G>&& e)
-                : val_e{std::move(e)}, has_val{false} { }
+            constexpr explicit(!std::is_convertible_v<G,E>) expected(xstd::unexpected<G>&& e)
+                : val_e{xstd::move(e)}, has_val{false} { }
 
             template<typename G>
             constexpr expected& operator=(const unexpected<G>& e) {
@@ -126,7 +124,7 @@ namespace std {
 
             template<typename G>
             constexpr expected& operator=(unexpected<G>&& e) {
-                val_e = std::move(e);
+                val_e = xstd::move(e);
                 has_val = false;
             }
 
@@ -173,16 +171,16 @@ namespace std {
 
             template<typename U>
             constexpr auto value_or(U&& default_value) const& -> T {
-                return bool(*this) ? **this : static_cast<T>(std::forward<U>(default_value));
+                return bool(*this) ? **this : static_cast<T>(xstd::forward<U>(default_value));
             }
 
             template<typename U>
             constexpr auto value_or(U&& default_value) && -> T {
-                return bool(*this) ? std::move(**this) : static_cast<T>(std::forward<U>(default_value));
+                return bool(*this) ? xstd::move(**this) : static_cast<T>(xstd::forward<U>(default_value));
             }
 
             template<typename T2, typename E2>
-            friend constexpr auto operator==(const expected& lhs, const std::expected<T2, E2>& rhs) -> bool {
+            friend constexpr auto operator==(const expected& lhs, const xstd::expected<T2, E2>& rhs) -> bool {
                 if(lhs.has_value() != rhs.has_value()) return false;
                 if(lhs.has_value()) return *lhs == *rhs;
                 else return lhs.error() == rhs.error();
@@ -203,7 +201,7 @@ namespace std {
         private:
             union {
                 T val_t;
-                std::unexpected<E> val_e;
+                xstd::unexpected<E> val_e;
             };
             bool has_val;
     };

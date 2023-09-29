@@ -2,7 +2,7 @@
 
 #include <concepts>
 #include <limits>
-#include "std/array.hpp"
+#include "xstd/array.hpp"
 #include "utils/static_string.hpp"
 
 namespace LiOS86 {
@@ -75,7 +75,7 @@ namespace LiOS86 {
     auto Shell::printhex_impl(T value) -> void {
         print_impl("0x");
         constexpr auto width = std::numeric_limits<T>::digits / 4;
-        std::array<char, width> str;
+        xstd::array<char, width> str;
         str.fill('0');
         size_t current_char_index = width - 1;
         while(value > 0) {

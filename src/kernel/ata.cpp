@@ -28,7 +28,7 @@ namespace LiOS86 {
         }   
     }
 
-    auto readSectors(uint32_t logicalBlockAddress, uint8_t numberOfSectors) -> std::expected<std::array<uint8_t, 512>, int> {
+    auto readSectors(uint32_t logicalBlockAddress, uint8_t numberOfSectors) -> xstd::expected<xstd::array<uint8_t, 512>, int> {
         while(checkStatus().busy()) { }
         
         constexpr uint8_t slaveBit = 0;
@@ -42,11 +42,11 @@ namespace LiOS86 {
 
         while(true) {
             auto status = checkStatus();
-            if(status.error()) return std::unexpected<int>{-1};
+            if(status.error()) return xstd::unexpected<int>{-1};
             if(status.dataTransferRequested()) break;
         }
 
-        std::expected<std::array<uint8_t, 512>, int> result;
+        xstd::expected<xstd::array<uint8_t, 512>, int> result;
         for(int i = 0; i < 256; ++i) {
             auto word = inw(Port::ATA_PRIMARY_DATA_REG);
             (*result)[2*i] = static_cast<uint8_t>(word);

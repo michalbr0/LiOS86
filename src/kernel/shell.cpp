@@ -4,7 +4,6 @@
 #include "keyboard_event.hpp"
 #include "ports.hpp"
 #include "memory_manager.hpp"
-#include "std/cstring.hpp"
 
 namespace LiOS86 {
 
