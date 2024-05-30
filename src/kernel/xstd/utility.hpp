@@ -19,4 +19,8 @@ namespace LiOS86::xstd {
         return static_cast<T&&>(t);
     }
 
+    [[noreturn]] inline void unreachable() {
+        __builtin_unreachable();
+    }
+
 }
