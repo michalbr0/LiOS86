@@ -87,7 +87,6 @@ namespace LiOS86::xstd {
     template<typename T, typename E>
     requires is_valid_expected_argument_v<T> &&
                 (!std::is_void_v<T>) && 
-                std::is_default_constructible_v<T> &&
                 is_sufficiently_trivial_v<T> &&
                 is_valid_expected_argument_v<E> &&
                 is_valid_unexpected_argument_v<E> &&
