@@ -20,7 +20,7 @@ LDFLAGS := -O3 -nostdlib
 
 SRCS_BOOT := $(shell find $(SRC_DIR_BOOT) -name '*.asm')
 BINS_BOOT := $(patsubst $(SRC_DIR_BOOT)%,$(BUILD_DIR_BOOT)%.bin,$(SRCS_BOOT))
-SRCS_LOADER_STAGE_2 := $(shell find $(SRC_DIR_KERNEL)/loader -name '*.cpp' -or -name '*.asm') $(addprefix $(SRC_DIR_KERNEL)/,ata.cpp xstd/cstring.cpp)
+SRCS_LOADER_STAGE_2 := $(shell find $(SRC_DIR_KERNEL)/loader -name '*.cpp' -or -name '*.asm') $(addprefix $(SRC_DIR_KERNEL)/,ata.cpp utils/error_handling.cpp xstd/cstring.cpp)
 OBJS_LOADER_STAGE_2 := $(patsubst $(SRC_DIR_KERNEL)%,$(BUILD_DIR_KERNEL)%.o,$(SRCS_LOADER_STAGE_2))
 SRCS_KERNEL_ALL = $(shell find $(SRC_DIR_KERNEL) -name '*.cpp' -or -name '*.asm')
 SRCS_KERNEL := $(filter-out $(shell find $(SRC_DIR_KERNEL)/loader -name '*.cpp' -or -name '*.asm'), $(SRCS_KERNEL_ALL))

@@ -5,6 +5,7 @@
 #include "../directory_sector.hpp"
 #include "../mbr.hpp"
 #include "../utils/data_manipulation.hpp"
+#include "../utils/error_handling.hpp"
 #include "../xstd/expected.hpp"
 
 namespace LiOS86 {
@@ -57,8 +58,7 @@ namespace LiOS86 {
             for(int i = 0; i < sectorsPerCluster; ++i) {
                 const auto sector = LiOS86::readSectors(currentSectorNumber + i, 1);
                 if(!sector) {
-                    // panic
-                    while(true) { }
+                    kpanic("Error reading the kernel file. Halting.");
                 }
                 const auto currentSectorCount = sectorsPerCluster * currentClusterCount + i;
                 for(int j = 0; j < 512; ++j) {
@@ -69,7 +69,9 @@ namespace LiOS86 {
             ++currentClusterCount;
         } while(currentCluster > 0x00000001 && currentCluster < 0x0FFFFFF7);
 
-        // TODO error handling
+        if(currentCluster <= 0x00000001 || currentCluster == 0x0FFFFFF7) {
+            kpanic("Error reading the kernel file. Halting.");
+        }
     }
 
 }
@@ -84,7 +86,8 @@ extern "C" void kloader() {
 
     const auto bpbHandle = LiOS86::BPBHandle(partitionStartingSector);
     const auto bytesPerSector = bpbHandle.getBytesPerSector();
-    // assert bytesPerSector == 512
+    kassert(bytesPerSector == 512);
+
     const auto sectorsPerCluster = bpbHandle.getSectorsPerCluster();
     const auto FATSizeInSectors = bpbHandle.getFATSizeInSectors();
     const auto rootDirectoryStartingCluster = bpbHandle.getRootDirectoryStartingCluster();
@@ -97,8 +100,7 @@ extern "C" void kloader() {
     for(std::size_t i = 0; i < FATSizeInSectors; ++i) {
         const auto sector = LiOS86::readSectors(FATStartingSector + i, 1);
         if(!sector) {
-            // panic
-            while(true) { }
+            LiOS86::kpanic("Error reading the File Allocation Table. Halting.");
         }
         for(int j = 0; j < 512; ++j) {
             extendedMemoryPtr[i * 512 + j] = (*sector)[j];
@@ -119,8 +121,7 @@ extern "C" void kloader() {
                                         );
     
     if(!kernelFileStartingCluster) {
-        // panic
-        while(true) { }
+        LiOS86::kpanic("Error reading the kernel file. Halting.");
     }
 
     auto kernelMemoryPtr = reinterpret_cast<volatile uint8_t*>(KERNEL_MEMORY_START_ADDRESS);
