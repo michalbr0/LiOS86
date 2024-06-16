@@ -6,15 +6,16 @@ A simple, toy x86 operating system written in C++.
 
 ![LiOS86 screenshot](docs/screenshot.png)
 
-Features implemented in the current version (`1.0.0`):
+Features implemented in the current version (`1.0.1`):
 - bootloader
 - interrupt handling
 - simple interactive shell
 - crude dynamic memory allocation
+- PIO disk access
+- partial FAT32 filesystem support (reading BPB and directory sectors)
 
 Not yet implemented:
 - virtual memory support
-- disk access & filesystem support
 - concurrency support
 
 The provided `Makefile` supports compiling the operating system from source (using an i386 [cross-compiler](https://wiki.osdev.org/GCC_Cross-Compiler)), generating a disk image and running it in `qemu` emulator.

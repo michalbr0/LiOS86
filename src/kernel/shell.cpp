@@ -23,7 +23,7 @@ namespace LiOS86 {
         print_impl(R"( | |____| | | |__| |____) | | (_) | (_) |)"); print_impl('\n');
         print_impl(R"( |______|_|  \____/|_____/   \___/ \___/)"); print_impl('\n'); 
         print_impl('\n');
-        print_impl("version 1.0.0\n");
+        print_impl("version 1.0.1\n");
         print_impl("Developed by michalbr0 (github.com/michalbr0)\n\n");
         print_impl("Hello adventurer!\n\n");
         print_impl(">");
