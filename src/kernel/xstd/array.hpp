@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-namespace std {
+namespace LiOS86::xstd {
     
     template<typename T, std::size_t N>
     class array {

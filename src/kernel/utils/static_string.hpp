@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-#include "../std/cstring.hpp"
+#include "../xstd/cstring.hpp"
 
 namespace LiOS86 {
 
@@ -83,16 +83,16 @@ namespace LiOS86 {
 
             friend constexpr auto operator==(const StaticBasicString<CharT, Capacity>& lhs, const StaticBasicString<CharT, Capacity>& rhs) -> bool {
                 if(lhs.size() != rhs.size()) return false;
-                return (std::strcmp(lhs.c_str(), rhs.c_str()) == 0);
+                return (xstd::strcmp(lhs.c_str(), rhs.c_str()) == 0);
             }
             friend constexpr auto operator==(const StaticBasicString<CharT, Capacity>& lhs, const CharT* rhs) -> bool {
-                return (std::strcmp(lhs.c_str(), rhs) == 0);
+                return (xstd::strcmp(lhs.c_str(), rhs) == 0);
             }
             friend constexpr auto operator<=>(const StaticBasicString<CharT, Capacity>& lhs, const StaticBasicString<CharT, Capacity>& rhs) -> int {
-                return std::strcmp(lhs.c_str(), rhs.c_str());
+                return xstd::strcmp(lhs.c_str(), rhs.c_str());
             }
             friend constexpr auto operator<=>(const StaticBasicString<CharT, Capacity>& lhs, const CharT* rhs) -> int {
-                return std::strcmp(lhs.c_str(), rhs);
+                return xstd::strcmp(lhs.c_str(), rhs);
             }
 
             constexpr auto clear() noexcept -> void {

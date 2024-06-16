@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <type_traits>
 
-#include "../std/utility.hpp"
+#include "../xstd/utility.hpp"
 
 namespace LiOS86 {
 
@@ -110,14 +110,14 @@ namespace LiOS86 {
     template<typename T, std::size_t Capacity>
     constexpr auto StaticVector<T, Capacity>::push_back(T&& value) -> void {
         ++current_size;
-        back() = std::move(value);
+        back() = xstd::move(value);
     }
 
     template<typename T, std::size_t Capacity>
     template<typename... Args>
     constexpr auto StaticVector<T, Capacity>::emplace_back(Args&&... args) -> reference {
         ++current_size;
-        back() = T(std::forward<Args>(args)...);
+        back() = T(xstd::forward<Args>(args)...);
         return back();
     }
 

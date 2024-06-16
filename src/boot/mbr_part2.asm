@@ -30,9 +30,13 @@ loadVBR:
 .read:
     mov ah, 0x02            ; read sectors from drive mode
     mov al, 1               ; number of sectors to read
-    mov dh, byte [si+1]     ; starting head
-    mov cl, byte [si+2]     ; starting sector
-    mov ch, byte [si+3]     ; starting cylinder
+
+    ; reading sector 2048 (LBA)
+    ; assuming SPT=63 and HPC=64
+    mov ch, 0               ; starting cylinder
+    mov dh, 32              ; starting head
+    mov cl, 33              ; starting sector
+    
     xor bx, bx
     mov es, bx              ; destination segment
     xor bx, 0x7c00          ; destination offset

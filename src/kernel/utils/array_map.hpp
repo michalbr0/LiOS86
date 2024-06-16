@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <limits>
 
-#include "../std/array.hpp"
+#include "../xstd/array.hpp"
 
 namespace LiOS86 {
     
@@ -26,7 +26,7 @@ namespace LiOS86 {
             }
 
         private:
-            std::array<T, std::numeric_limits<underlying_key_type>::max()+1> arr{};
+            xstd::array<T, std::numeric_limits<underlying_key_type>::max()+1> arr{};
     };
 
     template<typename Key, typename T>

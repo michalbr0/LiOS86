@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-namespace std {
+namespace LiOS86::xstd {
 
     template<typename T>
     constexpr auto move(T&& t) noexcept {
@@ -17,6 +17,10 @@ namespace std {
     template<typename T>
     constexpr auto forward(std::remove_reference_t<T>&& t) noexcept {
         return static_cast<T&&>(t);
+    }
+
+    [[noreturn]] inline void unreachable() {
+        __builtin_unreachable();
     }
 
 }
